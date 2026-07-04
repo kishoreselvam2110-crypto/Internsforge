@@ -9,15 +9,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements.txt .
 
-# Install Python packages (using Python 3.11 wheels)
+# Install CPU-only PyTorch + all other deps
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Download the sentence-transformers model during build so it's cached in the image
+# Pre-download the sentence-transformers model so it's baked into the image
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-mpnet-base-v2')"
 
 COPY . .
 
 ENV PYTHONPATH=/app
-EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Render sets $PORT dynamically
+EXPOSE 8000
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}

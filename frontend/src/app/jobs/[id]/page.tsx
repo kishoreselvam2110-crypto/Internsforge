@@ -19,10 +19,11 @@ export default function JobDashboardPage() {
 
   const fetchJobDetails = async () => {
     try {
+      const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       // Temporarily mock JWT token, Auth will be implemented next
       const token = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
       
-      const res = await fetch(`http://localhost:8000/jobs/`, {
+      const res = await fetch(`${API}/jobs/`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!res.ok) throw new Error("Failed to fetch jobs");
@@ -31,7 +32,7 @@ export default function JobDashboardPage() {
       if (currentJob) setJob(currentJob);
 
       // Now fetch match results
-      const resultsRes = await fetch(`http://localhost:8000/resumes/${jobId}/results`, {
+      const resultsRes = await fetch(`${API}/resumes/${jobId}/results`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (resultsRes.ok) {
@@ -59,7 +60,7 @@ export default function JobDashboardPage() {
         formData.append("file", file);
         formData.append("job_id", jobId);
 
-        const res = await fetch(`http://localhost:8000/resumes/upload`, {
+        const res = await fetch(`${API}/resumes/upload`, {
           method: "POST",
           headers: { "Authorization": `Bearer ${token}` },
           body: formData,

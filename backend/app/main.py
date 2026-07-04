@@ -24,3 +24,7 @@ app.include_router(resumes.router)
 @app.get("/")
 def root():
     return {"message": "Talent AI API is running."}
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}

@@ -25,7 +25,8 @@ export default function CreateJobPage() {
         experience_years: Number(formData.experience_years)
       };
 
-      const res = await fetch("http://localhost:8000/jobs/", {
+      const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const res = await fetch(`${API}/jobs/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
