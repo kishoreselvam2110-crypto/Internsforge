@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Custom Properties (Design Tokens) ── */
+:root {
+  --background: 40 30% 96%;
+  --foreground: 220 10% 20%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 10% 20%;
+  --primary: 220 15% 15%;
+  --primary-foreground: 40 30% 96%;
+  --secondary: 40 20% 90%;
+  --secondary-foreground: 220 15% 15%;
+  --muted: 40 10% 92%;
+  --muted-foreground: 220 10% 45%;
+  --accent: 12 76% 61%;
+  --accent-foreground: 0 0% 100%;
+  --success: 142 69% 38%;
+  --warning: 38 92% 50%;
+  --border: 40 15% 85%;
+  --input: 40 15% 85%;
+  --ring: 220 15% 15%;
+}
+
+/* ── Base Resets ── */
+*,
+*::before,
+*::after {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-playfair), Georgia, serif;
+  letter-spacing: -0.02em;
+  color: hsl(var(--primary));
+}
+
+/* ── Utility Classes ── */
+.annotation {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-style: italic;
+  color: hsl(var(--accent));
+  transform: rotate(-1.5deg);
+  display: inline-block;
+}
+
+.monospace-score {
+  font-family: var(--font-jetbrains), "Courier New", monospace;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
