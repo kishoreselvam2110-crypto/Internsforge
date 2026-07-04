@@ -1,5 +1,6 @@
 from supabase import create_client, Client, ClientOptions
-from app.config import settings
+
+from ..config import settings
 
 def get_supabase_client(jwt: str = None) -> Client:
     """

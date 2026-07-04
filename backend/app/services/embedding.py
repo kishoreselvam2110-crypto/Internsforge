@@ -1,5 +1,6 @@
 import hashlib
 import os
+import re
 import httpx
 from typing import List
 

@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from typing import List
-from app.models.schemas import MatchResultResponse, ResumeResponse
-from app.dependencies import get_db_client, get_user_id_from_token
-from app.services.extractor import extract_text
-from app.services.nlp import parse_resume
-from app.services.embedding import embedding_service
-from app.services.scorer import compute_match_score
 from supabase import Client
 import uuid
+
+from ..dependencies import get_db_client, get_user_id_from_token
+from ..models.schemas import MatchResultResponse, ResumeResponse
+from ..services.embedding import embedding_service
+from ..services.extractor import extract_text
+from ..services.nlp import parse_resume
+from ..services.scorer import compute_match_score
 
 router = APIRouter(prefix="/resumes", tags=["Resumes"])
 

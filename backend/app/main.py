@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import jobs, resumes
+from .routers import jobs, resumes
 
 app = FastAPI(
     title="Talent AI API",

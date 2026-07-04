@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
-from app.models.schemas import JobDescriptionCreate, JobDescriptionResponse
-from app.dependencies import get_db_client, get_user_id_from_token
-from app.services.embedding import embedding_service
 from supabase import Client
+
+from ..dependencies import get_db_client, get_user_id_from_token
+from ..models.schemas import JobDescriptionCreate, JobDescriptionResponse
+from ..services.embedding import embedding_service
 
 router = APIRouter(prefix="/jobs", tags=["Jobs"])
 

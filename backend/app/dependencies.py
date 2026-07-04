@@ -1,7 +1,9 @@
 from fastapi import Header, HTTPException, Depends
 from typing import Optional
-from app.services.supabase import get_supabase_client
 from supabase import Client
+
+from .config import settings
+from .services.supabase import get_supabase_client
 
 def get_auth_token(authorization: Optional[str] = Header(None)) -> str:
     """
@@ -31,7 +33,6 @@ def get_user_id_from_token(token: str = Depends(get_auth_token)):
     Returns None when using service-role / anon key (E2E / dev mode).
     """
     try:
-        from app.config import settings
         # Admin or anon key → bypass auth, user_id will be NULL (allowed by schema)
         if token in (settings.SUPABASE_SERVICE_ROLE_KEY, settings.SUPABASE_ANON_KEY):
             return None

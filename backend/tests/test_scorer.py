@@ -3,7 +3,8 @@ Unit tests for the hybrid scorer.
 Skills are stored lowercased by the NLP extractor, so assertions use .lower() comparisons.
 """
 import pytest
-from app.services.scorer import compute_match_score, calculate_cosine_similarity
+
+from backend.app.services.scorer import compute_match_score, calculate_cosine_similarity
 
 
 def test_cosine_similarity():

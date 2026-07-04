@@ -1,6 +1,7 @@
 from typing import Dict, Any, List, Tuple
-from app.config import settings
-from app.services.nlp import EDUCATION_LEVELS
+
+from ..config import settings
+from .nlp import EDUCATION_LEVELS
 
 def parse_vector_string(vec_str: str) -> List[float]:
     """
@@ -104,15 +105,18 @@ def compute_match_score(
     req_edu_rank = get_edu_rank(req_edu_str)
     cand_edu_rank = get_edu_rank(cand_edu_str)
     
+    candidate_edu = resume_desc.get("education_level") or "Bachelor's"
+    required_edu = job_desc.get("education_level") or "Bachelor's"
+
     if cand_edu_rank >= req_edu_rank:
         education_score = 100.0
-        edu_status = f"Meets or exceeds requirement (Candidate: {resume_desc.get('education_level') or "Bachelor's"}, Required: {job_desc.get('education_level') or "Bachelor's"})."
+        edu_status = f"Meets or exceeds requirement (Candidate: {candidate_edu}, Required: {required_edu})."
     elif cand_edu_rank == req_edu_rank - 1:
         education_score = 50.0
-        edu_status = f"Below requirement by 1 level (Candidate: {resume_desc.get('education_level') or "Bachelor's"}, Required: {job_desc.get('education_level') or "Bachelor's"})."
+        edu_status = f"Below requirement by 1 level (Candidate: {candidate_edu}, Required: {required_edu})."
     else:
         education_score = 0.0
-        edu_status = f"Significantly below requirement (Candidate: {resume_desc.get('education_level') or "Bachelor's"}, Required: {job_desc.get('education_level') or "Bachelor's"})."
+        edu_status = f"Significantly below requirement (Candidate: {candidate_edu}, Required: {required_edu})."
         
     # 5. Hybrid Weighted Score
     w_sem = settings.WEIGHT_SEMANTIC
