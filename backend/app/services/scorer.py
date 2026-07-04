@@ -2,14 +2,33 @@ from typing import Dict, Any, List, Tuple
 from app.config import settings
 from app.services.nlp import EDUCATION_LEVELS
 
-def calculate_cosine_similarity(u: List[float], v: List[float]) -> float:
+def parse_vector_string(vec_str: str) -> List[float]:
+    """
+    Parses a PGVector string representation like '[0.1,0.2,...]' into a list of floats.
+    """
+    try:
+        cleaned = vec_str.strip().strip('[]')
+        if not cleaned:
+            return []
+        return [float(x) for x in cleaned.split(',')]
+    except Exception:
+        return []
+
+def calculate_cosine_similarity(u: Any, v: Any) -> float:
     """
     Computes cosine similarity between two vectors.
     Since embeddings are normalized, this is simply the dot product.
+    Automatically parses PGVector string inputs.
     """
+    if isinstance(u, str):
+        u = parse_vector_string(u)
+    if isinstance(v, str):
+        v = parse_vector_string(v)
+        
     if not u or not v or len(u) != len(v):
         return 0.0
     return sum(x * y for x, y in zip(u, v))
+
 
 def compute_match_score(
     job_desc: Dict[str, Any],

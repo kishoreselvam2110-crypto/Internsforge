@@ -9,11 +9,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements.txt .
 
-# Install CPU-only PyTorch + all other deps
+# Install dependencies (very fast, no heavy torch/transformers)
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Pre-download the sentence-transformers model so it's baked into the image
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-mpnet-base-v2')"
 
 COPY . .
 
