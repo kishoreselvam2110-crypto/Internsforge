@@ -1,6 +1,3 @@
 {
-  "rootDirectory": "frontend",
-  "buildCommand": "next build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install"
+  "rootDirectory": "frontend"
 }
