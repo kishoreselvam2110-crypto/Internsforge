@@ -25,7 +25,7 @@ async def upload_and_match_resume(
     """
     # 1. Fetch Job Description
     try:
-        job_res = db.table("job_descriptions").select("*").eq("id", job_id).execute()
+        job_res = db.table("job_descriptions").select("*").eq("id", job_id).eq("user_id", user_id).execute()
         if not job_res.data:
             raise HTTPException(status_code=404, detail="Job description not found.")
         job_desc = job_res.data[0]
@@ -123,13 +123,12 @@ async def upload_and_match_resume(
         raise HTTPException(status_code=400, detail=f"Failed to save match result: {str(e)}")
 
 @router.get("/job/{job_id}", response_model=List[MatchResultResponse])
-def get_job_rankings(job_id: str, db: Client = Depends(get_db_client)):
+def get_job_rankings(job_id: str, db: Client = Depends(get_db_client), user_id: str = Depends(get_user_id_from_token)):
     """
     Get all ranked resumes for a specific job description.
     """
     try:
-        # Join with resumes table to return full candidate details alongside scores
-        response = db.table("match_results").select("*, resume:resumes(*)").eq("job_description_id", job_id).order("total_score", desc=True).execute()
+        response = db.table("match_results").select("*, resume:resumes(*)").eq("job_description_id", job_id).eq("user_id", user_id).order("total_score", desc=True).execute()
         return response.data
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Database error: {str(e)}")

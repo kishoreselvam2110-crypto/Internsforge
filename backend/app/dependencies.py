@@ -3,7 +3,7 @@ from typing import Optional
 from supabase import Client
 
 from .config import settings
-from .services.supabase import get_supabase_client
+from .services.supabase import get_supabase_admin_client, get_supabase_client
 
 def get_auth_token(authorization: Optional[str] = Header(None)) -> str:
     """
@@ -20,9 +20,12 @@ def get_auth_token(authorization: Optional[str] = Header(None)) -> str:
 
 def get_db_client(token: str = Depends(get_auth_token)) -> Client:
     """
-    Dependency that returns an authenticated Supabase client for database operations.
+    Dependency that returns a Supabase client for database operations.
+    Uses admin client for service or anon tokens in prototype mode.
     """
     try:
+        if token in (settings.SUPABASE_SERVICE_ROLE_KEY, settings.SUPABASE_ANON_KEY):
+            return get_supabase_admin_client()
         return get_supabase_client(token)
     except Exception as e:
         raise HTTPException(status_code=401, detail=f"Failed to authenticate with Supabase: {str(e)}")
@@ -30,12 +33,16 @@ def get_db_client(token: str = Depends(get_auth_token)) -> Client:
 def get_user_id_from_token(token: str = Depends(get_auth_token)):
     """
     Retrieves the user UUID from the Supabase JWT token.
-    Returns None when using service-role / anon key (E2E / dev mode).
+    Falls back to a configured default user ID when using anon/service role keys.
     """
     try:
-        # Admin or anon key → bypass auth, user_id will be NULL (allowed by schema)
         if token in (settings.SUPABASE_SERVICE_ROLE_KEY, settings.SUPABASE_ANON_KEY):
-            return None
+            if not settings.SUPABASE_DEFAULT_USER_ID:
+                raise HTTPException(
+                    status_code=401,
+                    detail="SUPABASE_DEFAULT_USER_ID must be set when using anon/service role tokens."
+                )
+            return settings.SUPABASE_DEFAULT_USER_ID
 
         client = get_supabase_client(token)
         user_response = client.auth.get_user(token)

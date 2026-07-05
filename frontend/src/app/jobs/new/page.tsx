@@ -30,7 +30,6 @@ export default function CreateJobPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Temporarily mock JWT token, Auth will be implemented next
           "Authorization": `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`
         },
         body: JSON.stringify(payload),
@@ -114,9 +113,9 @@ export default function CreateJobPage() {
               onChange={e => setFormData({ ...formData, education_level: e.target.value })}
             >
               <option value="High School">High School</option>
-              <option value="Associate's">Associate's</option>
-              <option value="Bachelor's">Bachelor's</option>
-              <option value="Master's">Master's</option>
+              <option value="Associate&apos;s">Associate&apos;s</option>
+              <option value="Bachelor&apos;s">Bachelor&apos;s</option>
+              <option value="Master&apos;s">Master&apos;s</option>
               <option value="PhD">PhD</option>
             </select>
           </div>

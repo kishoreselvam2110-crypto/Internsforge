@@ -1,42 +1,66 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { CandidateCard } from "@/components/CandidateCard";
+
+interface Job {
+  id: string;
+  title: string;
+  experience_years: number;
+  education_level: string;
+  skills: string[];
+}
+
+interface CandidateExplanation {
+  matched_skills: string[];
+  missing_skills: string[];
+  experience_status: string;
+  education_status: string;
+  summary: string;
+}
+
+interface CandidateResult {
+  id: string;
+  total_score: number;
+  semantic_score: number;
+  skills_score: number;
+  experience_score: number;
+  education_score: number;
+  explanation: CandidateExplanation;
+  resume: {
+    candidate_name?: string;
+  };
+}
 
 export default function JobDashboardPage() {
   const params = useParams();
   const jobId = params.id as string;
 
-  const [job, setJob] = useState<any>(null);
-  const [candidates, setCandidates] = useState<any[]>([]);
+  const [job, setJob] = useState<Job | null>(null);
+  const [candidates, setCandidates] = useState<CandidateResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
-  useEffect(() => {
-    fetchJobDetails();
-  }, [jobId]);
+  const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const token = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  const fetchJobDetails = async () => {
+  const fetchJobDetails = useCallback(async () => {
     try {
-      const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-      // Temporarily mock JWT token, Auth will be implemented next
-      const token = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
       const res = await fetch(`${API}/jobs/`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (!res.ok) throw new Error("Failed to fetch jobs");
       const jobs = await res.json();
-      const currentJob = jobs.find((j: any) => j.id === jobId);
+      const currentJob = jobs.find((j: Job) => j.id === jobId);
       if (currentJob) setJob(currentJob);
 
       // Now fetch match results
-      const resultsRes = await fetch(`${API}/resumes/${jobId}/results`, {
+      const resultsRes = await fetch(`${API}/resumes/job/${jobId}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (resultsRes.ok) {
-        const results = await resultsRes.json();
+        const results = (await resultsRes.json()) as CandidateResult[];
         setCandidates(results);
       }
     } catch (error) {
@@ -44,23 +68,23 @@ export default function JobDashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API, jobId, token]);
+
+  useEffect(() => {
+    void fetchJobDetails();
+  }, [fetchJobDetails]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     setUploading(true);
     
     try {
-      const token = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      
-      // Upload each file
       for (let i = 0; i < e.target.files.length; i++) {
         const file = e.target.files[i];
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("job_id", jobId);
 
-        const res = await fetch(`${API}/resumes/upload`, {
+        const res = await fetch(`${API}/resumes/upload/${jobId}`, {
           method: "POST",
           headers: { "Authorization": `Bearer ${token}` },
           body: formData,
@@ -71,14 +95,12 @@ export default function JobDashboardPage() {
         }
       }
       
-      // Refresh candidates
       await fetchJobDetails();
     } catch (error) {
       console.error(error);
       alert("Error uploading files");
     } finally {
       setUploading(false);
-      // Reset input
       e.target.value = '';
     }
   };

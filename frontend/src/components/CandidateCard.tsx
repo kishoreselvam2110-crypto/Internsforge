@@ -71,7 +71,7 @@ export function CandidateCard({
           <div>
             <h4 className="font-semibold text-primary mb-2">AI Summary</h4>
             <p className="text-foreground/80 leading-relaxed italic border-l-2 border-muted pl-3">
-              "{explanation.summary}"
+              {explanation.summary}
             </p>
           </div>
           
