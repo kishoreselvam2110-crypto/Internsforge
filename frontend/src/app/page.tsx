@@ -14,10 +14,10 @@ export default function Home() {
           <nav>
             {/* We will add Auth UI here later */}
             <Link 
-              href="/dashboard" 
+              href="/jobs/new" 
               className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-sm shadow-sm hover:bg-primary/90 transition-colors"
             >
-              Go to Dashboard
+              Create Job &rarr;
             </Link>
           </nav>
         </div>
